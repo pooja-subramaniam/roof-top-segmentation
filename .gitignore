@@ -1,0 +1,9 @@
+# exclude data from source control by default
+/data/
+
+# exclude cached files
+**/.DS_Store
+**/**/.DS_Store
+
+# exclude model files
+/models/
