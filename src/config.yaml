@@ -1,0 +1,8 @@
+# ######################################## #
+# ############ Directories ############### #
+# ######################################## # 
+
+data dir: 'data/raw'
+image_folder: 'images'
+label_folder: 'labels'
+test_folder: 'test_images'
