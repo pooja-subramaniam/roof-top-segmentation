@@ -3,6 +3,13 @@
 # ######################################## # 
 
 data dir: 'data/raw'
-image_folder: 'images'
-label_folder: 'labels'
-test_folder: 'test_images'
+images dir: 'images'
+labels dir: 'labels'
+test dir: 'test_images'
+
+# ######################################## #
+# ############ Training params ########### #
+# ######################################## # 
+
+seed: 100
+batch size: 4
