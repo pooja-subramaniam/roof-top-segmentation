@@ -14,8 +14,7 @@ def createDeepLabv3(out_channels: int=1) -> Any:
       model: Returns the DeepLabv3 model with the ResNet101 
       backbone with pretrained weights and a classifier head.
   """
-  model = models.segmentation.deeplabv3_resnet101(pretrained=True,
-                                                  progress=True)
+  model = models.segmentation.deeplabv3_resnet101(progress=True)
  
   # 2048 is the output channels from deeplabv3
   model.classifier = DeepLabHead(2048, out_channels)
