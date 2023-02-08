@@ -42,7 +42,7 @@ Project Organization
     │   │
     │   ├── utils.py       <- Utility functions
     │   │
-    │   ├── config.yaml    <- Set configurations for running 
+    │   ├── config.yaml    <- Set configurations for training 
     
 ------------
 
