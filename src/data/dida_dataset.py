@@ -73,7 +73,7 @@ class DidaSegmentationDataset(VisionDataset):
             if self.transforms:
                 sample["image"] = self.transforms(sample["image"])
                 sample["label"] = self.transforms(sample["label"])
-                sample["label"][sample["label"] > 0] == 1
+                sample["label"][sample["label"] > 0] = 1
 
         return sample
 
