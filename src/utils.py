@@ -8,6 +8,8 @@ import numpy as np
 
 import torch
 
+from metrics import dice_coefficient
+
 
 def save_dict(data: Dict[str, Any], filename: Path) -> None:
     """Save dictionary as json file
@@ -45,7 +47,7 @@ def get_device() -> None:
     return torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-def prep_training_log(log_folder: Path) -> Tuple:
+def prep_training_log(log_folder: Path, metrics: List) -> Tuple:
     """Prepare log variable and log file for training and validation loss
     to be updated during training
     Args:
@@ -55,7 +57,9 @@ def prep_training_log(log_folder: Path) -> Tuple:
     """
 
     # Initialize the log file for training and val loss
-    fieldnames = ['epoch', 'train_loss', 'val_loss']
+    fieldnames = ['epoch', 'train_loss', 'val_loss'] + \
+                 [f'train_{m}' for m in metrics] + \
+                 [f'val_{m}' for m in metrics]
     epochsummary = {a: [0] for a in fieldnames}
     save_train_log(log_folder, fieldnames, epochsummary, mode='w')
 
@@ -63,7 +67,8 @@ def prep_training_log(log_folder: Path) -> Tuple:
 
 
 def update_epochsummary(epochsummary: Dict[str, Any], epoch: int,
-                        batch_loss: Dict[str, float]) -> Dict[str, Any]:
+                        batch_loss: Dict[str, float],
+                        batch_metrics: Dict[str, float]) -> Dict[str, Any]:
     """Update summary of epochs from batch data
     Args:
         epochsummary: dictionary to be updated with mean of batch loss
@@ -75,8 +80,13 @@ def update_epochsummary(epochsummary: Dict[str, Any], epoch: int,
     """
     epochsummary['epoch'] = epoch
     phases = ['train', 'val']
+    metric_names = list(batch_metrics['train'].keys())
     for phase in phases:
         epochsummary[f'{phase}_loss'] = np.mean(batch_loss[phase])
+        for metric_name in metric_names:
+            epochsummary[f'{phase}_{metric_name}'] = np.mean(
+                                                             batch_metrics[phase][metric_name]
+                                                            )
 
     return epochsummary
 
@@ -105,3 +115,25 @@ def save_model(model_weights: Any, log_folder: Path):
         model_weights: state_dict of model
     """
     torch.save(model_weights, log_folder / 'weights.pt')
+
+
+def get_metrics(metric_names: List, y_true: torch.tensor,
+                y_pred: torch.tensor, threshold):
+    """Get evaluation metrics for the pair of label and prediction
+    Args:
+        metric_names: list of metrics to be computed
+        y_true: ground truth label
+        y_pred: prediction from the model
+        threshold: to be applied to the prediction
+    Returns: 
+    """
+    metrics = {}
+    for metric_name in metric_names:
+        metrics[metric_name] = []
+        for sample_y_true, sample_y_pred in zip(y_true, y_pred):
+            if metric_name == 'dice':
+                metrics[metric_name] = dice_coefficient(sample_y_true > 0,
+                                                    sample_y_pred > threshold)
+            else:
+                raise f"{metric_name} has not been implemented"
+    return metrics
