@@ -5,7 +5,7 @@ from pathlib import Path
 import torch
 
 from data import get_dataloader
-from models import createDeepLabv3, train
+from models import create_deeplabv3, train
 from utils import save_dict, verify_exists_else_create, set_seed
 
 
@@ -35,7 +35,7 @@ def main():
     dataloaders = get_dataloader(data_directory, config['images dir'], config['labels dir'],
                                  seed=config['seed'], batch_size=config['batch size'])
 
-    model = createDeepLabv3()
+    model = create_deeplabv3()
 
     # Specify the loss function
     criterion = torch.nn.BCEWithLogitsLoss()
