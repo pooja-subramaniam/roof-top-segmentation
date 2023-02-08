@@ -1,6 +1,7 @@
 import numpy as np
 
-def dice_coefficient(y_true, y_pred):
+
+def dice_coefficient(y_true: np.array, y_pred: np.array) -> float:
     """Calculate dice coefficient 
     Args:
         y_true: true labels
