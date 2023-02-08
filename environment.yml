@@ -2,16 +2,18 @@ name: dida_challenge
 channels:
   - pytorch
   - nvidia
+  - anaconda
   - conda-forge
 dependencies:
   - _libgcc_mutex=0.1=conda_forge
   - _openmp_mutex=4.5=2_kmp_llvm
+  - appdirs=1.4.4=pyhd3eb1b0_0
   - blas=2.116=mkl
   - blas-devel=3.9.0=16_linux64_mkl
   - brotlipy=0.7.0=py310h5764c6d_1005
   - bzip2=1.0.8=h7f98852_4
-  - ca-certificates=2022.12.7=ha878542_0
-  - certifi=2022.12.7=pyhd8ed1ab_0
+  - ca-certificates=2022.07.19=h06a4308_0
+  - certifi=2022.6.15=py310h06a4308_0
   - cffi=1.15.1=py310h255011f_3
   - charset-normalizer=2.1.1=pyhd8ed1ab_0
   - cryptography=39.0.0=py310h34c0648_0
@@ -54,6 +56,7 @@ dependencies:
   - gnutls=3.6.13=h85f3911_1
   - icu=70.1=h27087fc_0
   - idna=3.4=pyhd8ed1ab_0
+  - joblib=1.1.0=pyhd3eb1b0_0
   - jpeg=9e=h166bdaf_2
   - lame=3.100=h166bdaf_1003
   - lcms2=2.14=hfd0df8a_1
@@ -106,12 +109,15 @@ dependencies:
   - openh264=2.1.1=h780b84a_0
   - openjpeg=2.5.0=hfec8fc6_2
   - openssl=3.0.8=h0b41bf4_0
+  - packaging=21.3=pyhd3eb1b0_0
   - pillow=9.4.0=py310h023d228_1
   - pip=23.0=pyhd8ed1ab_0
   - pipreqs=0.4.11=pyhd8ed1ab_0
+  - pooch=1.4.0=pyhd3eb1b0_0
   - pthread-stubs=0.4=h36c2ea0_1001
   - pycparser=2.21=pyhd8ed1ab_0
   - pyopenssl=23.0.0=pyhd8ed1ab_0
+  - pyparsing=3.0.4=pyhd3eb1b0_0
   - pysocks=1.7.1=pyha2e5f31_6
   - python=3.10.9=he550d4f_0_cpython
   - python_abi=3.10=3_cp310
@@ -121,8 +127,11 @@ dependencies:
   - pyyaml=6.0=py310h5764c6d_5
   - readline=8.1.2=h0f457ee_0
   - requests=2.28.2=pyhd8ed1ab_0
+  - scikit-learn=1.1.1=py310h6a678d5_0
+  - scipy=1.10.0=py310h8deb116_2
   - setuptools=67.1.0=pyhd8ed1ab_0
   - tbb=2021.7.0=h924138e_1
+  - threadpoolctl=2.2.0=pyh0d69192_0
   - tk=8.6.12=h27826a3_0
   - torchaudio=0.13.1=py310_cu116
   - torchvision=0.14.1=py310_cu116
@@ -137,3 +146,4 @@ dependencies:
   - yarg=0.1.9=py_1
   - zlib=1.2.13=h166bdaf_4
   - zstd=1.5.2=h3eb15da_6
+prefix: /home/pooja/mambaforge/envs/dida_challenge
