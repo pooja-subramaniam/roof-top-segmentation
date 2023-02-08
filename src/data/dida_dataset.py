@@ -1,98 +1,120 @@
-from torchvision.datasets.vision import VisionDataset
-from torchvision import transforms
-
 from typing import Optional, Callable, Any, Tuple
+from pathlib import Path
 import numpy as np
 from PIL import Image
-from pathlib import Path
 
+from torchvision.datasets.vision import VisionDataset
 
-
-## Custom dataset definition
 
 class DidaSegmentationDataset(VisionDataset):
+    """Custom dataset class for rooftop image segmentation
+    """
+    def __init__(self,
+                  root: Path,
+                  image_folder: str,
+                  label_folder: str,
+                  seed: int,
+                  transforms: Optional[Callable] = None,
+                  fraction: float = None,
+                  subset: str = None,
+                ) -> None:
 
-  def __init__(self,
-                 root: Path,
-                 image_folder: str,
-                 label_folder: str,
-                 seed: int,
-                 transforms: Optional[Callable] = None,
-                 fraction: float = None,
-                 subset: str = None,
-               ) -> None:
+        super().__init__(root, transforms)
 
-      super().__init__(root, transforms)
-      
-      image_folder_path = self.root / image_folder
-      label_folder_path = self.root / label_folder
-        
-      if not image_folder_path.exists():
-        raise OSError(f"{image_folder_path} does not exist.")
-      if not label_folder_path.exists():
-        raise OSError(f"{label_folder_path} does not exist.")
+        image_folder_path = self.root / image_folder
+        label_folder_path = self.root / label_folder
 
-      if not fraction:
-        self.image_names = self._get_sorted_filenames(image_folder_path)
-        self.label_names = self._get_sorted_filenames(label_folder_path)
-      else:
-        if subset.lower() not in ["train", "val"]:
-          raise (ValueError(
-              f"{subset} is not a valid input. Acceptable values are train and val."
-          ))
-        self.image_list = self._get_sorted_filenames(image_folder_path)
-        self.label_list = self._get_sorted_filenames(label_folder_path)
+        if not image_folder_path.exists():
+            raise OSError(f"{image_folder_path} does not exist.")
+        if not label_folder_path.exists():
+            raise OSError(f"{label_folder_path} does not exist.")
 
-        shuffled_indices = self._get_shuffled_indices(seed, len(self.image_list))
-        self.image_list = self.image_list[shuffled_indices]
-        self.label_list = self.label_list[shuffled_indices]
-        
-        self.fraction = fraction
-        split_idx = int(np.ceil(len(self.image_list) * (1 - self.fraction)))
-
-        if subset.lower() == "train":
-          self.image_names, self.label_names = self._get_train(split_idx)
+        if not fraction:
+            self.image_names = self._get_sorted_filenames(image_folder_path)
+            self.label_names = self._get_sorted_filenames(label_folder_path)
         else:
-          self.image_names, self.label_names = self._get_val(split_idx)
+            if subset.lower() not in ["train", "val"]:
+                raise (ValueError(
+                       f"{subset} is not a valid input. Acceptable values are train and val."
+                      ))
+            self.image_list = self._get_sorted_filenames(image_folder_path)
+            self.label_list = self._get_sorted_filenames(label_folder_path)
 
-# VisionDataset abstract functions defined
-  def __len__(self) -> int:
-    return len(self.image_names)
+            shuffled_indices = self._get_shuffled_indices(seed, len(self.image_list))
+            self.image_list = self.image_list[shuffled_indices]
+            self.label_list = self.label_list[shuffled_indices]
 
-  def __getitem__(self, index: int) -> Any:
-    image_path = self.image_names[index]
-    label_path = self.label_names[index]
+            self.fraction = fraction
+            split_idx = int(np.ceil(len(self.image_list) * (1 - self.fraction)))
 
-    with open(image_path, "rb") as image_file, open(label_path,
-                                                    "rb") as label_file:
-      image = Image.open(image_file)
+            if subset.lower() == "train":
+                self.image_names, self.label_names = self._get_train(split_idx)
+            else:
+                self.image_names, self.label_names = self._get_val(split_idx)
 
-      if image.mode != 'RGB':
-        image = image.convert('RGB')
-      
-      label = Image.open(label_file)
+    # VisionDataset abstract functions defined
+    def __len__(self) -> int:
+        return len(self.image_names)
 
-      sample = {"image": image, "label": label}
-      if self.transforms:
-          sample["image"] = self.transforms(sample["image"])
-          sample["label"] = self.transforms(sample["label"])
-          sample["label"][sample["label"] > 0] == 255
+    def __getitem__(self, index: int) -> Any:
+        image_path = self.image_names[index]
+        label_path = self.label_names[index]
 
-      return sample
+        with open(image_path, "rb") as image_file, open(label_path,
+                                                      "rb") as label_file:
+            image = Image.open(image_file)
 
-# helper functions within the class
-  def _get_train(self, index: int) -> Tuple:
-    return self.image_list[:index], self.label_list[:index]
+            if image.mode != 'RGB':
+                image = image.convert('RGB')
 
-  def _get_val(self, index: int) -> Tuple:
-    return self.image_list[index:], self.label_list[index:]
+            label = Image.open(label_file)
 
-  def _get_sorted_filenames(self, folder_path: Path) -> np.ndarray:
-    return np.array(sorted(list(folder_path.glob("*.png"))))
+            sample = {"image": image, "label": label}
+            if self.transforms:
+                sample["image"] = self.transforms(sample["image"])
+                sample["label"] = self.transforms(sample["label"])
+                sample["label"][sample["label"] > 0] == 1
 
-  def _get_shuffled_indices(self, seed: int, length: int) -> np.ndarray:
-    np.random.seed(seed)
-    indices = np.arange(length)
-    np.random.shuffle(indices)
-    return indices
-  
+        return sample
+
+    # helper functions within the class
+    def _get_train(self, index: int) -> Tuple:
+        """Get arrays of images and labels paths for training
+        Args:
+            index: index until where training data paths is extracted from all data paths arrays
+        Returns:
+            tuple of image and label path arrays
+        """
+        return self.image_list[:index], self.label_list[:index]
+
+    def _get_val(self, index: int) -> Tuple:
+        """Get arrays of images and labels paths for validation
+        Args:
+            index: index from where validation data paths is extracted from all data paths arrays
+        Returns:
+            tuple of image and label path arrays
+        """
+        return self.image_list[index:], self.label_list[index:]
+
+    def _get_sorted_filenames(self, folder_path: Path) -> np.ndarray:
+        """Get all the filenames in a folder and sort them
+        Args:
+            folder_path: path from where filenames are to be extracted
+        Returns:
+            array of all the filenames in the folder
+        """
+        return np.array(sorted(list(folder_path.glob("*.png"))))
+
+    def _get_shuffled_indices(self, seed: int, length: int) -> np.ndarray:
+        """Shuffle indices so as to pseudo-randomize the train and val splitting
+        Args:
+            seed: for reproducibility, set numpy random seed
+            length: number of samples in the dataset for shuffling
+        Returns:
+            array of shuffled indices
+        """
+        np.random.seed(seed)
+        indices = np.arange(length)
+        np.random.shuffle(indices)
+        return indices
+    
