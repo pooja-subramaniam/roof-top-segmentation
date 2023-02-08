@@ -1,22 +1,22 @@
-import json
-import numpy as np
 from typing import Dict, Any, Tuple, List, Optional
+import json
 from pathlib import Path
 import csv
 import random
 import os
+import numpy as np
 
 import torch
 
 
-def save_dict(d: Dict[str, Any], filename: Path) -> None:
+def save_dict(data: Dict[str, Any], filename: Path) -> None:
     """Save dictionary as json file
     Args:
         d: data to be dumped into a json file
         filename: filename path
     """
-    with open(filename, 'w') as f:
-        json.dump(d, f)
+    with open(filename, 'w', encoding='utf-8') as file:
+        json.dump(data, file)
 
 
 def verify_exists_else_create(folder: Path) -> None:
@@ -90,7 +90,8 @@ def save_train_log(log_folder: Path, fieldnames: List,
         fieldnames: fieldnames to be used as header
         epochsummary: summary of epoch losses to be written into log.csv
     """
-    with open(log_folder / 'log.csv', mode, newline='') as csvfile:
+    with open(log_folder / 'log.csv', mode, newline='',
+              encoding='utf-8') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         if mode == 'w':
             writer.writeheader()
