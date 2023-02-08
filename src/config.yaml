@@ -14,10 +14,10 @@ test dir: 'test_images'
 seed: 100
 batch size: 4
 lr: 0.0001
-num epochs: 2
+num epochs: 30
 
 # ######################################## #
 # ############ Evaluation params ######### #
 # ######################################## # 
-metrics: ['dice']
+metrics: ['dice', 'pr-auc']
 threshold: 0.1

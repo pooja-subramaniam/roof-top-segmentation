@@ -8,7 +8,7 @@ import numpy as np
 
 import torch
 
-from metrics import dice_coefficient
+from metrics import dice_coefficient, precision_recall_auc
 
 
 def save_dict(data: Dict[str, Any], filename: Path) -> None:
@@ -117,8 +117,8 @@ def save_model(model_weights: Any, log_folder: Path):
     torch.save(model_weights, log_folder / 'weights.pt')
 
 
-def get_metrics(metric_names: List, y_true: torch.tensor,
-                y_pred: torch.tensor, threshold):
+def get_metrics(metric_names: List, y_true: np.array,
+                y_pred: np.array, threshold: int) -> Dict[str, List]:
     """Get evaluation metrics for the pair of label and prediction
     Args:
         metric_names: list of metrics to be computed
@@ -134,6 +134,9 @@ def get_metrics(metric_names: List, y_true: torch.tensor,
             if metric_name == 'dice':
                 metrics[metric_name] = dice_coefficient(sample_y_true > 0,
                                                     sample_y_pred > threshold)
+            elif metric_name == 'pr-auc':
+                metrics[metric_name] = precision_recall_auc(sample_y_true,
+                                                            sample_y_pred)
             else:
                 raise f"{metric_name} has not been implemented"
     return metrics
