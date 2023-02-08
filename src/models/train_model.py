@@ -1,14 +1,17 @@
 import time
 import copy
-from typing import Any
+from typing import Any, List
 from pathlib import Path
 
 import torch
 import utils
 
+from metrics import dice_coefficient
+
 
 def train(model: Any, criterion: Any, dataloaders: Any,
-          optimizer: Any, log_folder: Path, num_epochs: int) -> Any:
+          optimizer: Any, log_folder: Path, num_epochs: int,
+          metrics: List, threshold: float) -> Any:
     """Training module with pre-trained weights
     Args:
         model: pretrained model that needs fine-tuning
@@ -17,6 +20,8 @@ def train(model: Any, criterion: Any, dataloaders: Any,
         optimizer: torch optimizer object
         log_folder: folder to log training performance
         num_epochs: total number of epochs to train
+        metrics: list of metrics to be computed and reported along with loss
+        threshold: threshold used for calculating metrics
     Returns:
         trained model with best weights based on val performance
 
@@ -30,7 +35,7 @@ def train(model: Any, criterion: Any, dataloaders: Any,
     model.to(device)
 
     # Initialize fieldnames and epoch summary
-    fieldnames, epochsummary = utils.prep_training_log(log_folder)
+    fieldnames, epochsummary = utils.prep_training_log(log_folder, metrics)
 
     start = time.time()
     print(f"Starting training with {criterion.__class__.__name__} "
@@ -42,6 +47,7 @@ def train(model: Any, criterion: Any, dataloaders: Any,
         print('-' * 10)
 
         batch_loss = {'train': [], 'val': []}
+        batch_metrics = {'train': {}, 'val': {}}
 
         # Each epoch has a training and validation phase
         for phase in ['train', 'val']:
@@ -69,9 +75,14 @@ def train(model: Any, criterion: Any, dataloaders: Any,
                         loss.backward()
                         optimizer.step()
 
-                batch_loss[phase].append(loss.item())
+                    y_true = labels.detach().data.cpu().numpy()
+                    y_pred = outputs['out'].detach().data.cpu()  # logits
+                    y_pred_prob = torch.sigmoid(y_pred).numpy()  # probabilities
 
-        epochsummary = utils.update_epochsummary(epochsummary, epoch, batch_loss)
+                batch_loss[phase].append(loss.item())
+                batch_metrics[phase] = utils.get_metrics(metrics, y_true, y_pred_prob, threshold)
+
+        epochsummary = utils.update_epochsummary(epochsummary, epoch, batch_loss, batch_metrics)
         print(epochsummary)
         utils.save_train_log(log_folder, fieldnames, epochsummary)
 

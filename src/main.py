@@ -48,7 +48,9 @@ def main():
                 dataloaders,
                 optimizer,
                 log_folder=LOG_FOLDER,
-                num_epochs=config['num epochs'])
+                num_epochs=config['num epochs'],
+                metrics=config['metrics'],
+                threshold=config['threshold'])
 
 
 
