@@ -1,8 +1,10 @@
-from torchvision import transforms
-from torch.utils.data import DataLoader
 from typing import Dict, Any
 
+from torchvision import transforms
+from torch.utils.data import DataLoader
+
 from data.dida_dataset import DidaSegmentationDataset
+
 
 def get_dataloader(data_dir: str,
                    image_folder: str = 'images',
@@ -34,12 +36,12 @@ def get_dataloader(data_dir: str,
                                transforms=data_transforms)
         for x in ['train', 'val']
     }
-    dataloaders = {
+
+    return {
         x: DataLoader(image_datasets[x],
                       batch_size=batch_size,
                       shuffle=True,
                       num_workers=8)
         for x in ['train', 'val']
-    }
-    return dataloaders
+        }
     
