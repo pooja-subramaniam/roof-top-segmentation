@@ -1,6 +1,6 @@
-from yaml import safe_load
 import os
 from pathlib import Path
+from yaml import safe_load
 
 import torch
 
@@ -18,7 +18,7 @@ def main():
     """Pipeline including dataloading and training
     """
 
-    with open(CONFIG_FILENAME) as config_file:
+    with open(CONFIG_FILENAME, encoding='utf-8') as config_file:
         config = safe_load(config_file)
 
     verify_exists_else_create(LOG_FOLDER)
