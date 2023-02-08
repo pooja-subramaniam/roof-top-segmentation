@@ -33,8 +33,9 @@ def train(model: Any, criterion: Any, dataloaders: Any,
     fieldnames, epochsummary = utils.prep_training_log(log_folder)
 
     start = time.time()
-    print(f"Starting training with {criterion.__class__.__name__} and {optimizer.__class__.__name__} "
-            f"optimizer with learning rate {optimizer.param_groups[0]['lr']}")
+    print(f"Starting training with {criterion.__class__.__name__} "
+          f"and {optimizer.__class__.__name__} "
+          f"optimizer with learning rate {optimizer.param_groups[0]['lr']}")
     for epoch in range(1, num_epochs + 1):
 
         print(f'Epoch {epoch}/{num_epochs}')
