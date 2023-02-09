@@ -1,12 +1,14 @@
-from typing import Dict, Any, Tuple, List, Optional
+from typing import Dict, Any, Tuple, List, Optional, Generator
 import json
 from pathlib import Path
 import csv
 import random
 import os
 import numpy as np
+from PIL import Image
 
 import torch
+from torchvision import transforms
 
 from metrics import dice_coefficient, precision_recall_auc
 
@@ -140,3 +142,52 @@ def get_metrics(metric_names: List, y_true: np.array,
             else:
                 raise f"{metric_name} has not been implemented"
     return metrics
+
+def get_filenames(folder: Path) -> List:
+    """Get filenames that end with .png from folder
+    Args:
+        folder: folder path to get the files from
+    Returns:
+        list of Posix paths
+    """
+    return list(folder.glob("*.png"))
+
+def get_test_images(folder: Path) -> Generator[Tuple[torch.Tensor, str], None, None]:
+    """Load and prepare images sequentially for prediction
+    Args:
+        folder: folder where the image files are
+    Returns:
+        Generator tuple with the prepared tensor and the image name
+    """
+    image_filenames = get_filenames(folder)
+    for image_filename in image_filenames:
+        with open(image_filename, "rb") as image_file:
+            image = Image.open(image_file)
+
+            if image.mode != 'RGB':
+                image = image.convert('RGB')
+            tensor_transform = transforms.ToTensor()
+
+            yield tensor_transform(image)[None, :, :, :], \
+                  str(image_filename).split('/')[-1]
+
+
+
+def get_predictions(image: torch.Tensor, model, thresold) -> np.ndarray:
+    """Compute predictions given an image, model and threshold
+    Args:
+        image: image tensor to be used to get prediction
+        model: model to be used to get prediction
+        threshold: apply a threshold to the prediction
+    Returns:
+        Segmentation prediction as numpy array
+    """
+
+    pred = model(image.to(get_device()))
+    pred = pred['out'][0].detach().to("cpu")
+    pred = torch.sigmoid(pred).numpy()
+
+    pred[pred > thresold] = 255
+    pred[pred <= thresold] = 0
+
+    return pred
