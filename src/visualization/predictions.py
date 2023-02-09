@@ -26,12 +26,12 @@ def save_predictions(image_generator: Generator[Tuple[torch.Tensor, str], None, 
         axs[0].set_title('image')
         axs[1].imshow(np.transpose(pred, (1, 2, 0))[:,:,0], cmap='gray')
         axs[1].set_axis_off()
-        axs[1].set_title('label')
+        axs[1].set_title('prediction')
 
         axs[2].imshow(np.transpose(image[0].numpy(), (1, 2, 0)))
         axs[2].imshow(np.transpose(pred, (1, 2, 0))[:,:,0], alpha=0.5)
         axs[2].set_axis_off()
-        axs[2].set_title('label on image')
+        axs[2].set_title('prediction on image')
 
         fig.suptitle(f"Prediction for image {image_name.split('.')[0]}")
         fig.tight_layout()
@@ -39,7 +39,8 @@ def save_predictions(image_generator: Generator[Tuple[torch.Tensor, str], None, 
         plt.close('all')
 
 
-def save_predictions_trval(data_loader: Any, model: Any, threshold: float, save_folder: Path) -> None:
+def save_predictions_trval(data_loader: Any, model: Any,
+                           threshold: float, save_folder: Path) -> None:
     """Save prediction images for train or val data that have labels
     Args:
         image_generator: yields the image and image name to be used for prediction
@@ -58,7 +59,7 @@ def save_predictions_trval(data_loader: Any, model: Any, threshold: float, save_
         axs[1].imshow(np.transpose(label[0].numpy(), (1, 2, 0))[:,:,0], cmap='gray')
         axs[1].set_axis_off()
         axs[1].set_title('label')
-    
+
         axs[2].imshow(np.transpose(pred, (1, 2, 0))[:,:,0], cmap='gray')
         axs[2].set_axis_off()
         axs[2].set_title('prediction')
