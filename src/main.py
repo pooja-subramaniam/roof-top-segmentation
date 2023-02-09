@@ -7,7 +7,7 @@ import torch
 from data import get_dataloader
 from models import create_deeplabv3, train
 from utils import save_dict, verify_exists_else_create, set_seed
-from predict_model import predict
+from predict import predict
 
 
 CONFIG_FILENAME = 'config.yaml'
