@@ -7,6 +7,7 @@ import torch
 import utils
 
 from metrics import dice_coefficient
+from visualization import plot_learning_curves, plot_metric_curves
 
 
 def train(model: Any, criterion: Any, dataloaders: Any,
@@ -85,6 +86,8 @@ def train(model: Any, criterion: Any, dataloaders: Any,
         epochsummary = utils.update_epochsummary(epochsummary, epoch, batch_loss, batch_metrics)
         print(epochsummary)
         utils.save_train_log(log_folder, fieldnames, epochsummary)
+        plot_learning_curves(log_folder, criterion.__class__.__name__)
+        plot_metric_curves(log_folder, fieldnames[3:])
 
         # update best_loss and best_model_wts
         if epochsummary['val_loss'] < best_loss:
