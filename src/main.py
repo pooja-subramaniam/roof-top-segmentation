@@ -7,6 +7,7 @@ import torch
 from data import get_dataloader
 from models import create_deeplabv3, train
 from utils import save_dict, verify_exists_else_create, set_seed
+from predict_model import predict
 
 
 CONFIG_FILENAME = 'config.yaml'
@@ -43,7 +44,7 @@ def main():
     # Specify the optimizer
     optimizer = torch.optim.Adam(model.parameters(), lr=config['lr'])
 
-    _ = train(model,
+    model = train(model,
                 criterion,
                 dataloaders,
                 optimizer,
@@ -52,6 +53,7 @@ def main():
                 metrics=config['metrics'],
                 threshold=config['threshold'])
 
+    predict(model)
 
 
 if __name__ == '__main__':

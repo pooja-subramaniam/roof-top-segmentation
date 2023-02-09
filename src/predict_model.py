@@ -6,8 +6,9 @@ from yaml import safe_load
 import torch
 
 import utils
+from data import get_dataloader
 from models import create_deeplabv3
-from visualization import save_predictions
+from visualization import save_predictions, save_predictions_trval
 
 
 CONFIG_FILENAME = 'config.yaml'
@@ -33,16 +34,37 @@ def predict(model: Any=None):
 
     model.eval().to(utils.get_device())
 
+    # reproducibility
+    utils.set_seed(config['seed'])
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+
     if 'test' in config['predict_on']:
 
         test_data_directory = data_directory / config['test dir']
         image_generator = utils.get_test_images(test_data_directory)
 
-        folder_to_save = LOG_FOLDER / 'test_predictions'
+        test_save_folder = LOG_FOLDER / 'test_predictions'
 
-        utils.verify_exists_else_create(folder_to_save)
+        utils.verify_exists_else_create(test_save_folder)
 
-        save_predictions(image_generator, model, config['threshold'], folder_to_save)
+        save_predictions(image_generator, model, config['threshold'], test_save_folder)
+
+    if 'val' in config['predict_on'] or 'train' in config['predict_on']:
+
+        dataloaders = get_dataloader(data_directory, config['images dir'], config['labels dir'],
+                                seed=config['seed'], batch_size=1)
+
+    if 'val' in config['predict_on']:
+        val_save_folder = LOG_FOLDER / 'val_predictions'
+        utils.verify_exists_else_create(val_save_folder)
+        save_predictions_trval(dataloaders['val'], model, config['threshold'], val_save_folder)
+
+    if 'train' in config['predict_on']:
+        train_save_folder = LOG_FOLDER / 'train_predictions'
+        utils.verify_exists_else_create(train_save_folder)
+        save_predictions_trval(dataloaders['train'], model, config['threshold'], train_save_folder)
 
 
 if __name__ == '__main__':

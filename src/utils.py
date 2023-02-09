@@ -173,7 +173,7 @@ def get_test_images(folder: Path) -> Generator[Tuple[torch.Tensor, str], None, N
 
 
 
-def get_predictions(image: torch.Tensor, model, thresold) -> np.ndarray:
+def get_predictions(image: torch.Tensor, model: Any, thresold: float) -> np.ndarray:
     """Compute predictions given an image, model and threshold
     Args:
         image: image tensor to be used to get prediction
