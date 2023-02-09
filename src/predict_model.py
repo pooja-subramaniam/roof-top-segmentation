@@ -19,8 +19,7 @@ LOG_FOLDER = TOP_DIRECTORY / 'models'
 def predict(model: Any=None):
     """Prediction module used to predict on test, train or val sets
     Args:
-        log_folder: where predictions can be saved
-        predict_on: list of sets for predictions to be made and saved as images
+        model: passed when called from main.py
     """
 
     with open(CONFIG_FILENAME, encoding='utf-8') as config_file:
