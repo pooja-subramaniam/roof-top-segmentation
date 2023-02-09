@@ -49,7 +49,7 @@ def get_device() -> None:
     return torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 
-def prep_training_log(log_folder: Path, metrics: List) -> Tuple:
+def prep_training_log(log_folder: Path, metrics: List) -> Tuple[List, Dict[str, List]]:
     """Prepare log variable and log file for training and validation loss
     to be updated during training
     Args:
@@ -127,7 +127,8 @@ def get_metrics(metric_names: List, y_true: np.array,
         y_true: ground truth label
         y_pred: prediction from the model
         threshold: to be applied to the prediction
-    Returns: 
+    Returns:
+        dictionary of metric names and their corresponding values
     """
     metrics = {}
     for metric_name in metric_names:
