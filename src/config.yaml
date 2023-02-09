@@ -21,3 +21,4 @@ num epochs: 30
 # ######################################## # 
 metrics: ['dice', 'pr-auc']
 threshold: 0.1
+predict_on: [test]
