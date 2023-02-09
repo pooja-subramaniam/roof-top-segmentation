@@ -49,6 +49,17 @@ Project Organization
 <p><small>Project adapted from the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a> </small></p>
 
 ------------
-
+## Training
 To run training pipeline, cd to src and run main.py:
 "python3 main.py"
+
+## Predicting
+After having a saved model in models/weights.pt, predict.py in src can be called 
+to generate labels for new images stored in test_images folder under data/raw/
+or can also generate labels for train or val images and compare predictions
+vs the ground truth label.
+
+## Plots and prediction visuals
+The visualizations of the loss and metrics are stored in models/. The visualizations of predictions
+can be found in models/test_predictions for data/raw/test_images. The train and validation data predictions
+are stored in models/train_predictions and models/val_predictions
