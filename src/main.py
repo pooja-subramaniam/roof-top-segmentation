@@ -21,10 +21,10 @@ def main():
 
     with open(CONFIG_FILENAME, encoding='utf-8') as config_file:
         config = safe_load(config_file)
+    log_folder = LOG_FOLDER / f"experiment_{config['experiment_number']}"
+    verify_exists_else_create(log_folder)
 
-    verify_exists_else_create(LOG_FOLDER)
-
-    save_dict(config, LOG_FOLDER / 'config.json')
+    save_dict(config, log_folder / 'config.json')
 
     data_directory = TOP_DIRECTORY / config['data dir']
 
@@ -49,7 +49,7 @@ def main():
                 criterion,
                 dataloaders,
                 optimizer,
-                log_folder=LOG_FOLDER,
+                log_folder=log_folder,
                 num_epochs=config['num epochs'],
                 metrics=config['metrics'],
                 threshold=config['threshold'])

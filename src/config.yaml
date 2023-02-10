@@ -10,12 +10,12 @@ test dir: 'test_images'
 # ######################################## #
 # ############ Training params ########### #
 # ######################################## # 
-
+experiment_number: 2
 seed: 100
 batch size: 4
 lr: 0.0001
 num epochs: 25
-loss: dice  # bce
+loss: bce  # dice
 
 # ######################################## #
 # ############ Evaluation params ######### #

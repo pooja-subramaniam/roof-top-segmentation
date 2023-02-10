@@ -26,10 +26,11 @@ def predict(model: Any=None):
         config = safe_load(config_file)
 
     data_directory = TOP_DIRECTORY / config['data dir']
+    log_folder = LOG_FOLDER / f"experiment_{config['experiment_number']}"
 
     if model is None:
         model = create_deeplabv3()
-        model.load_state_dict(torch.load(LOG_FOLDER / 'weights.pt'))
+        model.load_state_dict(torch.load(log_folder / 'weights.pt'))
 
     model.eval().to(utils.get_device())
 
@@ -44,7 +45,7 @@ def predict(model: Any=None):
         test_data_directory = data_directory / config['test dir']
         image_generator = utils.get_test_images(test_data_directory)
 
-        test_save_folder = LOG_FOLDER / 'test_predictions'
+        test_save_folder = log_folder / 'test_predictions'
 
         utils.verify_exists_else_create(test_save_folder)
 
@@ -56,15 +57,17 @@ def predict(model: Any=None):
                                 seed=config['seed'], batch_size=1)
 
     if 'val' in config['predict_on']:
-        val_save_folder = LOG_FOLDER / 'val_predictions'
+        val_save_folder = log_folder / 'val_predictions'
         utils.verify_exists_else_create(val_save_folder)
-        metrics = save_predictions_trval(dataloaders['val'], model, config['threshold'], val_save_folder, config['metrics'])
+        metrics = save_predictions_trval(dataloaders['val'], model, config['threshold'],
+                                         val_save_folder, config['metrics'])
         utils.save_dict(metrics, val_save_folder / 'metrics.json')
 
     if 'train' in config['predict_on']:
-        train_save_folder = LOG_FOLDER / 'train_predictions'
+        train_save_folder = log_folder / 'train_predictions'
         utils.verify_exists_else_create(train_save_folder)
-        metrics = save_predictions_trval(dataloaders['train'], model, config['threshold'], train_save_folder, config['metrics'])
+        metrics = save_predictions_trval(dataloaders['train'], model, config['threshold'],
+                                         train_save_folder, config['metrics'])
         utils.save_dict(metrics, train_save_folder / 'metrics.json')
 
 
