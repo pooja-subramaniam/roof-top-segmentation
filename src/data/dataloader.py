@@ -24,7 +24,12 @@ def get_dataloader(data_dir: str,
         dataloaders: Returns dataloaders dictionary containing the
         train and val dataloaders.
     """
-    data_transforms = transforms.Compose([transforms.ToTensor()])
+    geometric_transforms = [transforms.RandomChoice([transforms.RandomVerticalFlip(),
+                                                     transforms.RandomHorizontalFlip, None])]
+    color_transforms = [transforms.RandomChoice([transforms.RandomAutocontrast(),
+                                                       transforms.RandomAdjustSharpness(2)])]
+    data_transforms = transforms.Compose(geometric_transforms + color_transforms
+                                         + [transforms.ToTensor()])
 
     image_datasets = {
         x: DidaSegmentationDataset(data_dir,

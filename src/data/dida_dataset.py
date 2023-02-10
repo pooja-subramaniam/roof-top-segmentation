@@ -5,6 +5,8 @@ from PIL import Image
 
 from torchvision.datasets.vision import VisionDataset
 
+import utils
+
 
 class DidaSegmentationDataset(VisionDataset):
     """Custom dataset class for rooftop image segmentation
@@ -23,6 +25,7 @@ class DidaSegmentationDataset(VisionDataset):
 
         image_folder_path = self.root / image_folder
         label_folder_path = self.root / label_folder
+        self.seed = seed
 
         if not image_folder_path.exists():
             raise OSError(f"{image_folder_path} does not exist.")
@@ -40,7 +43,7 @@ class DidaSegmentationDataset(VisionDataset):
             self.image_list = self._get_sorted_filenames(image_folder_path)
             self.label_list = self._get_sorted_filenames(label_folder_path)
 
-            shuffled_indices = self._get_shuffled_indices(seed, len(self.image_list))
+            shuffled_indices = self._get_shuffled_indices(len(self.image_list))
             self.image_list = self.image_list[shuffled_indices]
             self.label_list = self.label_list[shuffled_indices]
 
@@ -71,7 +74,9 @@ class DidaSegmentationDataset(VisionDataset):
 
             sample = {"image": image, "label": label}
             if self.transforms:
+                utils.set_seed(self.seed)
                 sample["image"] = self.transforms(sample["image"])
+                utils.set_seed(self.seed)
                 sample["label"] = self.transforms(sample["label"])
                 sample["label"][sample["label"] > 0] = 1
 
@@ -105,15 +110,14 @@ class DidaSegmentationDataset(VisionDataset):
         """
         return np.array(sorted(list(folder_path.glob("*.png"))))
 
-    def _get_shuffled_indices(self, seed: int, length: int) -> np.ndarray:
+    def _get_shuffled_indices(self, length: int) -> np.ndarray:
         """Shuffle indices so as to pseudo-randomize the train and val splitting
         Args:
-            seed: for reproducibility, set numpy random seed
             length: number of samples in the dataset for shuffling
         Returns:
             array of shuffled indices
         """
-        np.random.seed(seed)
+        np.random.seed(self.seed)
         indices = np.arange(length)
         np.random.shuffle(indices)
         return indices
