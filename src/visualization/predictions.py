@@ -1,12 +1,11 @@
-from typing import Generator, Tuple, Any
+from typing import Generator, Tuple, Any, List, Dict
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
 
-from utils import get_predictions
-
+import utils
 
 def save_predictions(image_generator: Generator[Tuple[torch.Tensor, str], None, None],
                      model: Any, threshold: float, save_folder: Path) -> None:
@@ -18,7 +17,7 @@ def save_predictions(image_generator: Generator[Tuple[torch.Tensor, str], None, 
     """
     for image, image_name in image_generator:
         print(f"Saving prediction for image {image_name.split('.')[0]}")
-        pred = get_predictions(image, model, threshold)
+        pred = utils.get_predictions(image, model, threshold)
 
         fig, axs = plt.subplots(1, 3)
         axs[0].imshow(np.transpose(image[0].numpy(), (1, 2, 0)))
@@ -40,17 +39,23 @@ def save_predictions(image_generator: Generator[Tuple[torch.Tensor, str], None, 
 
 
 def save_predictions_trval(data_loader: Any, model: Any,
-                           threshold: float, save_folder: Path) -> None:
-    """Save prediction images for train or val data that have labels
+                           threshold: float, save_folder: Path, metric_names: List) -> Dict[str, Any]:
+    """Save prediction images for train or val data that have labels and return metrics
     Args:
         image_generator: yields the image and image name to be used for prediction
         model: model to be used for prediction
         threshold: threshold to be used for saving the segmentation label
+    Returns:
+        individual prediction metric and mean prediction metric
     """
+    metrics = {metric_name: [] for metric_name in metric_names}
     for i, sample in enumerate(iter(data_loader)):
         image, label = sample['image'], sample['label']
         print(f"Saving prediction for image {i+1}")
-        pred = get_predictions(image, model, threshold)
+        pred = utils.get_predictions(image, model, threshold)
+        per_sample_metrics = utils.get_metrics(metric_names, label[0].numpy(), pred, threshold)
+        for metric_name in metric_names:
+            metrics[metric_name].append(per_sample_metrics[metric_name])
 
         fig, axs = plt.subplots(1, 4)
         axs[0].imshow(np.transpose(image[0].numpy(), (1, 2, 0)))
@@ -73,3 +78,8 @@ def save_predictions_trval(data_loader: Any, model: Any,
         fig.tight_layout()
         fig.savefig(save_folder / f'prediction_{i + 1}', dpi=200)
         plt.close('all')
+
+    for metric_name in metric_names:
+        metrics[f'mean_{metric_name}'] = np.asarray(metrics[metric_name]).mean()
+
+    return metrics

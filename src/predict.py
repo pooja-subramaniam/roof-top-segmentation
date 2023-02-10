@@ -58,12 +58,15 @@ def predict(model: Any=None):
     if 'val' in config['predict_on']:
         val_save_folder = LOG_FOLDER / 'val_predictions'
         utils.verify_exists_else_create(val_save_folder)
-        save_predictions_trval(dataloaders['val'], model, config['threshold'], val_save_folder)
+        metrics = save_predictions_trval(dataloaders['val'], model, config['threshold'], val_save_folder, config['metrics'])
+        utils.save_dict(metrics, val_save_folder / 'metrics.json')
 
     if 'train' in config['predict_on']:
         train_save_folder = LOG_FOLDER / 'train_predictions'
         utils.verify_exists_else_create(train_save_folder)
-        save_predictions_trval(dataloaders['train'], model, config['threshold'], train_save_folder)
+        metrics = save_predictions_trval(dataloaders['train'], model, config['threshold'], train_save_folder, config['metrics'])
+        utils.save_dict(metrics, train_save_folder / 'metrics.json')
+
 
 
 if __name__ == '__main__':
