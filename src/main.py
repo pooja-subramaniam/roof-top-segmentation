@@ -5,7 +5,7 @@ from yaml import safe_load
 import torch
 
 from data import get_dataloader
-from models import create_deeplabv3, train
+from models import create_deeplabv3, train, DiceLoss
 from utils import save_dict, verify_exists_else_create, set_seed
 from predict import predict
 
@@ -39,7 +39,8 @@ def main():
     model = create_deeplabv3()
 
     # Specify the loss function
-    criterion = torch.nn.BCEWithLogitsLoss()
+    #criterion = torch.nn.BCEWithLogitsLoss()
+    criterion = DiceLoss()
 
     # Specify the optimizer
     optimizer = torch.optim.Adam(model.parameters(), lr=config['lr'])
