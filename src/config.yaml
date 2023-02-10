@@ -20,5 +20,5 @@ num epochs: 30
 # ############ Evaluation params ######### #
 # ######################################## # 
 metrics: ['dice', 'pr-auc']
-threshold: 0.1
+threshold: 0.3
 predict_on: [test, train, val]
