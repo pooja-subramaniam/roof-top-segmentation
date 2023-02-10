@@ -203,7 +203,7 @@ def get_loss_function(loss_name: str) -> Any:
         instance of the loss class selected
     """
     if loss_name == 'bce':
-        return torch.nn.BCELossWithLogits()
+        return torch.nn.BCEWithLogitsLoss()
     elif loss_name == 'dice':
         return DiceLoss()
     else:
