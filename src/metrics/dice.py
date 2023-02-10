@@ -9,7 +9,7 @@ def dice_coefficient(y_true: np.array, y_pred: np.array) -> float:
     Returns:
         Dice coefficient
     """
-    smooth = 1.    
+    smooth = 1.
     y_true_f = y_true.flatten()
     y_pred_f = y_pred.flatten()
     intersection = np.sum(y_true_f * y_pred_f)

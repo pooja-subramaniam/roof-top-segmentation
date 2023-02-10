@@ -39,7 +39,8 @@ def save_predictions(image_generator: Generator[Tuple[torch.Tensor, str], None, 
 
 
 def save_predictions_trval(data_loader: Any, model: Any,
-                           threshold: float, save_folder: Path, metric_names: List) -> Dict[str, Any]:
+                           threshold: float, save_folder: Path,
+                           metric_names: List) -> Dict[str, Any]:
     """Save prediction images for train or val data that have labels and return metrics
     Args:
         image_generator: yields the image and image name to be used for prediction
