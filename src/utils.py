@@ -11,6 +11,7 @@ import torch
 from torchvision import transforms
 
 from metrics import dice_coefficient, precision_recall_auc
+from models.custom_loss import DiceLoss
 
 
 def save_dict(data: Dict[str, Any], filename: Path) -> None:
@@ -192,3 +193,18 @@ def get_predictions(image: torch.Tensor, model: Any, thresold: float) -> np.ndar
     pred[pred <= thresold] = 0
 
     return pred
+
+
+def get_loss_function(loss_name: str) -> Any:
+    """Choose the loss provided in config and return the relevant criterion to be used
+    Args:
+        loss_name: name of the loss
+    Returns:
+        instance of the loss class selected
+    """
+    if loss_name == 'bce':
+        return torch.nn.BCELossWithLogits()
+    elif loss_name == 'dice':
+        return DiceLoss()
+    else:
+        raise f"Loss {loss_name} not available. See utils.get_loss_function for losses implemented"

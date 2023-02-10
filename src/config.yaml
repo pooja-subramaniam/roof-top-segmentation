@@ -14,11 +14,12 @@ test dir: 'test_images'
 seed: 100
 batch size: 4
 lr: 0.0001
-num epochs: 30
+num epochs: 25
+loss: dice  # bce
 
 # ######################################## #
 # ############ Evaluation params ######### #
 # ######################################## # 
 metrics: ['dice', 'pr-auc']
-threshold: 0.3
+threshold: 0.4
 predict_on: [test, train, val]
