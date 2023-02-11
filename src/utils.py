@@ -11,7 +11,7 @@ import torch
 from torchvision import transforms
 
 from metrics import dice_coefficient, precision_recall_auc
-from models.custom_loss import DiceLoss
+from models.custom_loss import DiceLoss, CombinedDiceBCEWithLogitsLoss
 
 
 def save_dict(data: Dict[str, Any], filename: Path) -> None:
@@ -206,5 +206,7 @@ def get_loss_function(loss_name: str) -> Any:
         return torch.nn.BCEWithLogitsLoss()
     elif loss_name == 'dice':
         return DiceLoss()
+    elif loss_name == 'combined':
+        return CombinedDiceBCEWithLogitsLoss()
     else:
         raise f"Loss {loss_name} not available. See utils.get_loss_function for losses implemented"

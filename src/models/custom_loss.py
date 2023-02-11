@@ -28,3 +28,23 @@ class DiceLoss(nn.Module):
         dice = (2.*intersection + self.smooth)/(inputs.sum() + targets.sum() + self.smooth)
 
         return 1 - dice
+
+
+class CombinedDiceBCEWithLogitsLoss(nn.Module):
+    """Combine BCE and Dice loss.
+    """
+    def __init__(self):
+        super().__init__()
+        self.bce_loss = nn.BCEWithLogitsLoss()
+        self.dice_loss = DiceLoss()
+
+    def forward(self, inputs: torch.Tensor, targets: torch.Tensor) -> torch.FloatTensor:
+        """Add dice loss and bce loss.
+        Args:
+            inputs: logits from the model final layer
+            targets: ground truth labels
+        Returns:
+            combined dice and bce loss
+        """
+
+        return self.bce_loss(inputs, targets) + self.dice_loss(inputs,targets)
