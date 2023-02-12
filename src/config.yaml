@@ -10,12 +10,13 @@ test dir: 'test_images'
 # ######################################## #
 # ############ Training params ########### #
 # ######################################## # 
-experiment_number: 8
+experiment_number: 10
 seed: 100
 batch size: 4
 lr: 0.0002
 num epochs: 25
-loss: combined  # dice, bce
+loss: combined  # dice, bce, combined
+weight: 0.5  # incase of combined - bce is weighted (use 0 for equal - no weighting)
 
 # ######################################## #
 # ############ Evaluation params ######### #

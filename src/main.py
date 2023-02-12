@@ -40,7 +40,7 @@ def main():
 
     # Specify the loss function
     #criterion = torch.nn.BCEWithLogitsLoss()
-    criterion = get_loss_function(config['loss'])
+    criterion = get_loss_function(config['loss'], config['weight'])
 
     # Specify the optimizer
     optimizer = torch.optim.Adam(model.parameters(), lr=config['lr'])

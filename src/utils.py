@@ -195,10 +195,12 @@ def get_predictions(image: torch.Tensor, model: Any, thresold: float) -> np.ndar
     return pred
 
 
-def get_loss_function(loss_name: str) -> Any:
+def get_loss_function(loss_name: str, weight: float) -> Any:
     """Choose the loss provided in config and return the relevant criterion to be used
     Args:
         loss_name: name of the loss
+        weight: in case of combined the weight to be used
+        bce is weighted, 1 is equal weighting
     Returns:
         instance of the loss class selected
     """
@@ -207,6 +209,6 @@ def get_loss_function(loss_name: str) -> Any:
     elif loss_name == 'dice':
         return DiceLoss()
     elif loss_name == 'combined':
-        return CombinedDiceBCEWithLogitsLoss()
+        return CombinedDiceBCEWithLogitsLoss(weight)
     else:
         raise f"Loss {loss_name} not available. See utils.get_loss_function for losses implemented"

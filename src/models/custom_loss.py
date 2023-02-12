@@ -33,10 +33,11 @@ class DiceLoss(nn.Module):
 class CombinedDiceBCEWithLogitsLoss(nn.Module):
     """Combine BCE and Dice loss.
     """
-    def __init__(self):
+    def __init__(self, weight=0):
         super().__init__()
         self.bce_loss = nn.BCEWithLogitsLoss()
         self.dice_loss = DiceLoss()
+        self.weight = weight
 
     def forward(self, inputs: torch.Tensor, targets: torch.Tensor) -> torch.FloatTensor:
         """Add dice loss and bce loss.
@@ -47,4 +48,4 @@ class CombinedDiceBCEWithLogitsLoss(nn.Module):
             combined dice and bce loss
         """
 
-        return self.bce_loss(inputs, targets) + self.dice_loss(inputs,targets)
+        return self.bce_loss(inputs, targets) + self.weight * self.dice_loss(inputs,targets)
