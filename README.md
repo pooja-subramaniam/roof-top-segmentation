@@ -54,12 +54,12 @@ To run training pipeline, cd to src and run main.py:
 "python3 main.py"
 
 ## Predicting
-After having a saved model in models/weights.pt, predict.py in src can be called 
-to generate labels for new images stored in test_images folder under data/raw/
-or can also generate labels for train or val images and compare predictions
-vs the ground truth label.
+After having a saved model in models/experiment_{num}/weights.pt, predict.py in src can be called to generate labels for new images stored in test_images folder under data/raw/ or can also generate labels for train or val images and compare predictions vs the ground truth label.
 
 ## Plots and prediction visuals
-The visualizations of the loss and metrics are stored in models/. The visualizations of predictions
-can be found in models/test_predictions for data/raw/test_images. The train and validation data predictions
-are stored in models/train_predictions and models/val_predictions
+The visualizations of the loss and metrics are stored in respective experiment folders eg. models/experiment_{num}. The visualizations of predictions can be found in models/experiment_{num}/test_predictions for data/raw/test_images. The train and validation data predictions are stored in models/experiment_{num}/train_predictions and models/experiment_{num}/val_predictions
+
+## Documentation of the project
+The project documentation can be found under reports as [documentation.md](./reports/documentation.md)
+
+------------
