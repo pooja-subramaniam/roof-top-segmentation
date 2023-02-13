@@ -4,6 +4,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
+from PIL import Image
 
 import utils
 
@@ -15,27 +16,38 @@ def save_predictions(image_generator: Generator[Tuple[torch.Tensor, str], None, 
         model: model to be used for prediction
         threshold: threshold to be used for saving the segmentation label
     """
+    save_types = ['with_image', 'only_prediction']
     for image, image_name in image_generator:
         print(f"Saving prediction for image {image_name.split('.')[0]}")
         pred = utils.get_predictions(image, model, threshold)
 
-        fig, axs = plt.subplots(1, 3)
-        axs[0].imshow(np.transpose(image[0].numpy(), (1, 2, 0)))
-        axs[0].set_axis_off()
-        axs[0].set_title('image')
-        axs[1].imshow(np.transpose(pred, (1, 2, 0))[:,:,0], cmap='gray')
-        axs[1].set_axis_off()
-        axs[1].set_title('prediction')
+        for save_type in save_types:
 
-        axs[2].imshow(np.transpose(image[0].numpy(), (1, 2, 0)))
-        axs[2].imshow(np.transpose(pred, (1, 2, 0))[:,:,0], alpha=0.5)
-        axs[2].set_axis_off()
-        axs[2].set_title('prediction on image')
+            if save_type == 'with_image':
 
-        fig.suptitle(f"Prediction for image {image_name.split('.')[0]}")
-        fig.tight_layout()
-        fig.savefig(save_folder / f'prediction_{image_name}', dpi=200)
-        plt.close('all')
+                fig, axs = plt.subplots(1, 3)
+                axs[0].imshow(np.transpose(image[0].numpy(), (1, 2, 0)))
+                axs[0].set_axis_off()
+                axs[0].set_title('image')
+                axs[1].imshow(np.transpose(pred, (1, 2, 0))[:,:,0], cmap='gray')
+                axs[1].set_axis_off()
+                axs[1].set_title('prediction')
+
+                axs[2].imshow(np.transpose(image[0].numpy(), (1, 2, 0)))
+                axs[2].imshow(np.transpose(pred, (1, 2, 0))[:,:,0], alpha=0.5)
+                axs[2].set_axis_off()
+                axs[2].set_title('prediction on image')
+
+                fig.suptitle(f"Prediction for image {image_name.split('.')[0]}")
+                fig.tight_layout()
+                fig.savefig(save_folder / f'prediction_with_image_{image_name}', dpi=200)
+                plt.close('all')
+
+            else:
+
+                img = Image.fromarray(np.transpose(pred, (1, 2, 0))[:, :, 0].astype(np.uint8),
+                                      mode='L')
+                img.save(save_folder / f'{image_name}')
 
 
 def save_predictions_trval(data_loader: Any, model: Any,
