@@ -8,7 +8,7 @@ from torchvision.datasets.vision import VisionDataset
 import utils
 
 
-class DidaSegmentationDataset(VisionDataset):
+class RoofTopSegmentationDataset(VisionDataset):
     """Custom dataset class for rooftop image segmentation
     """
     def __init__(self,

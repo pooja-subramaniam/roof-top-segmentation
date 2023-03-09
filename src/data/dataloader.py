@@ -3,7 +3,7 @@ from typing import Dict, Any
 from torchvision import transforms
 from torch.utils.data import DataLoader
 
-from data.dida_dataset import DidaSegmentationDataset
+from data.roof_top_dataset import RoofTopSegmentationDataset
 
 
 def get_dataloader(data_dir: str,
@@ -32,7 +32,7 @@ def get_dataloader(data_dir: str,
                                          + [transforms.ToTensor()])
 
     image_datasets = {
-        x: DidaSegmentationDataset(data_dir,
+        x: RoofTopSegmentationDataset(data_dir,
                                image_folder=image_folder,
                                label_folder=label_folder,
                                seed=seed,

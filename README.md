@@ -1,7 +1,7 @@
-Dida Segmentation Task
-==============================
+Roof top Segmentation from Aerial remote sensing images
+=======================================================
 
-preparing module for dida segmentation task
+preparing module for roof top segmentation task
 
 Project Organization
 ------------
@@ -23,7 +23,7 @@ Project Organization
     │   └── documentation.md <- Report on approach and performance
     │
     ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
-    │                         generated with `pipreqs dida-segmentation-challenge`
+    │                         generated with `pipreqs roof-top-segmentation`
     │
     ├── environment.yml    <- conda exported environment file
     │

@@ -1,2 +1,2 @@
-from data.dida_dataset import DidaSegmentationDataset
+from data.roof_top_dataset import RoofTopSegmentationDataset
 from data.dataloader import get_dataloader

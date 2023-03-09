@@ -8,7 +8,7 @@ As a first step to the challenge, in the [exploration notebook](../notebooks/00_
 
 ## 2. Set up custom dataset class
 
-The modular approach begins here in the [data manipulation module](../src/data/) with [dida_dataset.py](../sr/data/dida_dataset.py). Here, a custom dataset class has been defined where the data is split into train and validation set and prepared for training by applying transforms.
+The modular approach begins here in the [data manipulation module](../src/data/) with [roof_top_dataset.py](../sr/data/roof_top_dataset.py). Here, a custom dataset class has been defined where the data is split into train and validation set and prepared for training by applying transforms.
 
 
 ## 3. Dataloaders

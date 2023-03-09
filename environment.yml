@@ -1,4 +1,4 @@
-name: dida_challenge
+name: roof_top_segmentation_challenge
 channels:
   - pytorch
   - nvidia
